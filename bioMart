@@ -1,0 +1,17 @@
+D0137_summary <- read.delim("~/RNAseq/edegR/D01357/D01357_cpm_normalized", row.names=1)
+gene_id <- rownames(D0137_summary)
+gene_id
+
+library(biomaRt)
+
+mart <- biomaRt::useMart(biomart = "ENSEMBL_MART_ENSEMBL",
+                         dataset = "mmusculus_gene_ensembl",
+                         host = 'ensembl.org')
+t2g <- biomaRt::getBM(attributes = c("ensembl_gene_id",
+                                    "external_gene_name", "description"), mart = mart, values = gene_id)
+
+rownames(t2g) <- t2g$ensembl_gene_id
+
+D0137_summary$t2g <- t2g[rownames(D0137_summary), ]
+
+write.table(D0137_summary, file = "D01357_cpm_annotation", sep = "\t")
