@@ -36,8 +36,11 @@ plotQLDisp(fit)
 fit <- glmQLFTest(fit, coef=2:5) # coef, To find genes different between any two of the groups:
 tab <- as.data.frame(topTags(fit, n=nrow(exprSet)))
 tab
-summary(decideTests(fit, lfc = 1, p.value = 0.01)) # absolute logFC should be at least 1, p value less than 0.05 as cutoff of significance
 write.table(tab, file = "D01357_qlf_timecourse", sep = "\t")
+
+summary(decideTests(fit, lfc=1, p.value = 0.01)) # absolute logFC should be at least 1, p value (is FDR actually) less than 0.05 as cutoff of significance
+sig<-decideTests(fit, lfc=1, p.value = 0.01) # 1 is true, 0 is false
+write.table(sig, file = "D01357_qlf_timecourse_sig", sep = "\t")
 
 ## DEG
 fit <- glmQLFit(exprSet, design, robust = TRUE)
