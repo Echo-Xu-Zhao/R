@@ -1,0 +1,13 @@
+library(clusterProfiler)
+
+d <- data.frame(target=c(158, 2161), background=c(375, 6149)) # total intron 376, total gene 6524
+row.names(d) <- c("Intron_containing", "Intronless")
+d
+
+fisher.test(d, alternative = "greater")
+
+## Benjamini-Hochberg multiple testing adjustment, R core function
+
+p=c(0.9993, 1, 0.0001392, 0.00000000008993, 0.9982, 1, 0.9987, 0.9995, 0.03706)
+adj_p <- p.adjust(p, method = "BH", n=length(p)) 
+write.table(adj_p, file = "/home/xu/S_cerevisiae_RNAseq/DE/intron_enrichment/adj_Pvalue", sep = "\t", row.names = FALSE)
