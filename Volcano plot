@@ -1,0 +1,16 @@
+DEG<- read.delim("~/S_cerevisiae_RNAseq/DE/volcano_plot/DE_MUT_Time_30_vs_0_Log2FC_higher_1_adjusted_pvalue_lower_0.05.txt", header = TRUE)
+
+# Make a basic volcano plot
+# pch represents solid and small dot
+with(DEG, plot(Log2.foldchange, -log10(Adjusted.p.value), xlab="Log2 foldchange", ylab="-log10(Adjusted p-value)", pch=20, main="Volcano plot", cex.axis=1.5, cex.lab=1.5, xlim=c(-3, 3))) 
+
+
+with(subset(DEG, Log2.foldchange>1 & Adjusted.p.value<.01 ), points(Log2.foldchange, -log10(Adjusted.p.value), pch=20, col="red"))
+with(subset(DEG, Log2.foldchange< (-1) & Adjusted.p.value<.01 ), points(Log2.foldchange, -log10(Adjusted.p.value), pch=20, col="blue"))
+
+# Label points with the textxy function from the calibrate plot
+library(calibrate)
+# with(subset(DEG, abs(Log2.foldchange)>1 & Adjusted.p.value<.01), textxy(Log2.foldchange, -log10(Adjusted.p.value))) # , labs=external_gene_name, cex=0.6
+
+abline(h = 2, col = "blue", lty = 2, lwd = 1)
+abline(v = c(-1,1), col = "blue", lty = 2, lwd = 1)
