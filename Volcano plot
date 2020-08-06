@@ -10,7 +10,7 @@ with(subset(DEG, Log2.foldchange< (-1) & Adjusted.p.value<.01 ), points(Log2.fol
 
 # Label points with the textxy function from the calibrate plot
 library(calibrate)
-# with(subset(DEG, abs(Log2.foldchange)>1 & Adjusted.p.value<.01), textxy(Log2.foldchange, -log10(Adjusted.p.value))) # , labs=external_gene_name, cex=0.6
+with(subset(DEG, abs(Log2.foldchange)>1 & Adjusted.p.value<.01), textxy(Log2.foldchange, -log10(Adjusted.p.value), labs=Gene, cex=0.6))
 
 abline(h = 2, col = "blue", lty = 2, lwd = 1)
 abline(v = c(-1,1), col = "blue", lty = 2, lwd = 1)
