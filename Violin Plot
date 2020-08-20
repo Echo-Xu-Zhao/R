@@ -1,0 +1,29 @@
+library(ggplot2)
+library(ggsignif)
+library(scales)
+#loading the data
+my_data <- read.delim("wt180_intron_vp", header = TRUE, sep = '\t')
+
+
+# violin chart
+p <- ggplot(my_data, aes(x=Type, y=Log2.foldchange, fill=Type)) + 
+geom_violin() +
+theme(text = element_text(size = 12), 
+      axis.text = element_text(size = 12), 
+      axis.text.x = element_text(size = 12),
+      axis.text.y = element_text(size = 12),
+      axis.title = element_text(size = 12),
+      axis.title.x = element_text(size = 12),
+      axis.title.y = element_text(size = 12),
+      legend.text = element_text(size = 12),
+      legend.title = element_text(size = 12),
+      legend.position = "right",
+      title = element_text(size = 12)
+      ) +
+
+geom_signif(comparisons = list(c("Intron-containing", "Intron-less")),   
+           map_signif_level=TRUE)+
+geom_boxplot(width=0.05)
+
+p+ scale_y_continuous(
+   labels = scales::number_format(accuracy = 0.1))
