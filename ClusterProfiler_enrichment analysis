@@ -1,4 +1,4 @@
-metascap2 <- read.delim("metascap2.txt")  ## input file should be samples(colnames), and gene list for each sample but with ID.
+metascap2 <- read.delim("metascap2.txt")  ## input file should be samples(colnames), and gene list for each sample but with Gene ID.
 
 library(clusterProfiler)
 
