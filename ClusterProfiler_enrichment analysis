@@ -1,0 +1,34 @@
+metascap2 <- read.delim("metascap2.txt")  ## input file should be samples(colnames), and gene list for each sample but with ID.
+
+library(clusterProfiler)
+
+metascap2[] <- lapply(metascap2, as.character)
+x1 <- metascap2$cluster1235
+x2 <- metascap2$cluster1236
+x3 <- metascap2$cluster1237
+x4 <- metascap2$cluster1238
+x5 <- metascap2$cluster1239
+
+## remove NA
+x1<-x1[!is.na(x1)]
+x2<-x2[!is.na(x2)]
+x3<-x3[!is.na(x3)]
+x4<-x4[!is.na(x4)]
+x5<-x5[!is.na(x5)]
+
+list <- list(x1, x2, x3, x4, x5)
+names(list) <- c("cluster1", "cluster2","cluster3","cluster4","cluster5")
+
+GO <- compareCluster(geneCluster = list, fun = "enrichGO", ont = "BP", OrgDb="org.Mm.eg.db")
+dotplot(GO)
+
+KEGG <- compareCluster(geneCluster = list, fun = "enrichKEGG", organism="mmu")
+dotplot(KEGG)
+
+library(ReactomePA)
+Reactome <- compareCluster(geneCluster = list, fun = "enrichPathway", organism="mouse")
+dotplot(Reactome)
+
+
+write.table(Reactome@compareClusterResult, file = "Reactome.txt", sep = "\t", row.names = FALSE)
+
