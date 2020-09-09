@@ -1,7 +1,23 @@
 library("ggplot2")
 
+# the input file is from clusterprofiler result, and it can be homemade list with cluster, terms, GeneRatio, p.adjust value.
 data <- read.table(file = "merge.txt", header = TRUE)
 
+> head(merge)
+      Cluster         ID X_                           Description                                   ID_Description  GeneRatio
+1 All_targets GO:0016569  _       covalent chromatin modification       GO:0016569_covalent chromatin modification 0.11706513
+2 All_targets GO:0033044  _ regulation of chromosome organization GO:0033044_regulation of chromosome organization 0.08821105
+3 All_targets GO:0006338  _                  chromatin remodeling                  GO:0006338_chromatin remodeling 0.04863974
+4 All_targets GO:0006281  _                            DNA repair                            GO:0006281_DNA repair 0.08079143
+5 All_targets GO:0006403  _                      RNA localization                      GO:0006403_RNA localization 0.04039571
+6 All_targets GO:0006006  _             glucose metabolic process             GO:0006006_glucose metabolic process 0.01896125
+    BgRatio      pvalue     p.adjust       qvalue geneID count
+1 443/23174 4.04000e-73 2.050000e-69 1.450000e-69 Pparg.... 10
+2 354/23174 3.60000e-52 3.660000e-49 2.590000e-49 ....... 8
+3 139/23174 1.14000e-38 7.240000e-36 5.130000e-36 ......... 23
+4 464/23174 3.09000e-33 9.220000e-31 6.530000e-31
+5 169/23174 1.59000e-23 2.010000e-21 1.430000e-21
+6 195/23174 2.34788e-04 1.855628e-03 1.314257e-03
 
 ggplot(data = data, aes(x = Cluster, y = Term, 
                         color = `p.adjust`, size = GeneRatio)) + 
@@ -15,3 +31,5 @@ ggplot(data = data, aes(x = Cluster, y = Term,
     axis.text.y = element_text(size = 12),
     legend.title=element_text(size=12), 
     legend.text=element_text(size=12)) 
+   
+ 
