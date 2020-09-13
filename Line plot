@@ -1,0 +1,36 @@
+library(ggplot2)
+
+
+input <- read.delim("cluster990.txt", sep = "\t", header = TRUE)
+
+head(input)
+  Day   Level      Zscore
+  Day-2    Site -0.77038370
+  Day+1    Site  1.03821100
+  Day+3    Site -0.23573270
+  Day+7    Site -0.03059234
+  Day-2 Protein -0.90272610
+  Day+1 Protein  1.22810000
+  Day+3 Protein  0.02236886
+  Day+7 Protein -0.34924130
+  Day-2     RNA  1.25435400
+  Day+1     RNA  0.50725760
+  Day+3     RNA -0.94799320
+  Day+7     RNA -0.81362290
+
+## reorder level for color legend
+levels(input$Level)
+input$Level <- factor(input$Level, levels = c("Site","Protein","RNA"))
+
+
+ggplot(data=input, aes(x=Day, y=Zscore, group=Level, colour=Level)) +
+  geom_line(size=1) +
+  geom_point() +
+  ggtitle("Cluster 990 (29 targets)") +
+  ylim(-2, 1.5) +
+  theme(
+  axis.text.x = element_text(size = 12),
+  axis.text.y = element_text(size = 12),
+  legend.title=element_text(size=12), 
+  legend.text=element_text(size=12),
+  plot.title = element_text(size=12))
