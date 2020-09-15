@@ -1,0 +1,28 @@
+library(DESeq2)
+countData_all <- read.delim("D0137_counts", header=TRUE)
+head.DataTable(countData_all)
+
+#set the first row as header, same as header=TRUE
+rownames(countData_all)<-countData_all[,1]
+
+#remove x in the first column
+countData_all<-countData_all[,-1]
+
+head.DataTable(countData_all)
+
+condition <- factor(c(rep("Day-2",3),rep("Day+1",3),rep("Day+3",3),rep("Day+7",3)), levels = c("Day-2","Day+1","Day+3","Day+7")) 
+#factor and levels should use the same name
+#condition <- factor(c("wt","wt","KO","KO"))
+condition
+
+colData <- data.frame(row.names=colnames(countData_all), condition)
+colData
+
+#build dds DESeqDataSet object
+dds <- DESeqDataSetFromMatrix(countData_all, DataFrame(condition), design= ~ condition )
+dds <- DESeq(dds)
+dds #view dds
+
+# PCA plot
+rld = rlogTransformation(dds) #rlog means (log2(counts(dds, normalized=TRUE) + 1)
+plotPCA(rld, intgroup=c("condition"))
