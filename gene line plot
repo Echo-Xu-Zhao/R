@@ -1,0 +1,21 @@
+library(ggplot2)
+
+
+input <- read.delim("benchmarker_zscore.txt", sep = "\t", header = TRUE)
+
+## reorder level for color legend
+
+input$Genes <- factor(input$Gene, levels = c("Pparg","Klf5","Klf15","Cebpa","Cebpb","Srebf1","Gata2","Gata3","Klf7"))
+
+
+ggplot(data=input, aes(x=Day, y=Zscore, group=Genes)) +
+  geom_line(aes(linetype=Function, color=Genes),size=1) +
+  geom_point(aes(shape=Function, color=Genes),size=2) +
+  ggtitle("Adpogenesis bench markers") +
+  ylim(-2, 2) +
+  theme(
+  axis.text.x = element_text(size = 12),
+  axis.text.y = element_text(size = 12),
+  legend.title=element_text(size=12), 
+  legend.text=element_text(size=12),
+  plot.title = element_text(size=12))
