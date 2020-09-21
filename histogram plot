@@ -1,0 +1,28 @@
+library(ggplot2)
+
+input <- read.delim("pearsoncorrelation_distribution.txt", header = TRUE, sep = '\t')
+> head(input)
+     Gene Pearson.coeffciency..r
+1    Ldha              0.9997823
+2    Rfc3              0.9990518
+3   Mybl2              0.9982805
+4  Kif20a              0.9944335
+5 Slc25a5              0.9934371
+6   Nr1h3              0.9929239
+
+p <- ggplot(input, aes(x=Pearson.coeffciency..r, y=stat(count) / sum(count),fill=..count..)) + 
+
+  #geom_histogram(aes(y = stat(count) / sum(count)),col="black",binwidth=0.1, breaks=seq(-1.0, 1.0, by=0.1)) +  # fill="grey"
+  #geom_text( color='white', aes(label =..count.., vjust = 0.5)) +
+  #geom_density(alpha=.2, col=2, fill="grey")  +
+  
+  stat_bin(binwidth=0.1, breaks=seq(-1.0, 1.0, by=0.1), color='black')+  
+  stat_bin(binwidth=0.1, breaks=seq(-1.0, 1.0, by=0.1), geom="text", aes(label=..count..), color='white',position=position_stack(vjust = 0.5)) +
+  labs(x="Pearson_coeffciency", y="Frequency") +
+  scale_y_continuous(labels = scales::percent) +
+  theme( axis.text.x = element_text(size = 12, color = "black"),
+         axis.text.y = element_text(size = 12),
+         legend.title=element_text(size=12), 
+         legend.text=element_text(size=12),
+         axis.title = element_text(size=12, color="black")) 
+p
