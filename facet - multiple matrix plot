@@ -1,0 +1,12 @@
+ggplot(data=input, aes(x=Day, y=Zscore, group=Level, colour=Level)) +
+  geom_line(size=1) +
+  geom_point() +
+  ggtitle("Cluster IV Positive early up") +
+  ylim(-2, 2) +
+  theme(
+  axis.text.x = element_blank(),
+  axis.text.y = element_text(size = 12),
+  legend.title=element_text(size=12), 
+  legend.text=element_text(size=12),
+  plot.title = element_text(size=12)) +
+  facet_grid(cols = vars(Subcluster))
