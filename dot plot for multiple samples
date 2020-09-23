@@ -20,9 +20,9 @@ data <- read.table(file = "merge.txt", header = TRUE)
 6 195/23174 2.34788e-04 1.855628e-03 1.314257e-03
 
 ## reorder the level by unique and order another column Order(No.1-....)
-data$Term <- factor(data$Description, levels=unique(data$Description[order(data$Order)]))
+data$Description <- factor(data$Description, levels=unique(data$Description[order(data$Order)]))
 
-ggplot(data = data, aes(x = Cluster, y = Term, 
+ggplot(data = data, aes(x = Cluster, y = Description, 
                         color = `p.adjust`, size = GeneRatio)) + 
   geom_point() +
   theme_bw() +
@@ -34,6 +34,6 @@ ggplot(data = data, aes(x = Cluster, y = Term,
     axis.text.y = element_text(size = 12, color = "black"),
     legend.title=element_text(size=12), 
     legend.text=element_text(size=12)) +
-scale_y_discrete(limits = unique(rev(levels))) ## reverse the y axis labels by levels
+scale_y_discrete(limits = unique(levels(data$Description))) ## reverse the y axis labels by levels
    
  
