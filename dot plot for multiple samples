@@ -3,7 +3,7 @@ library("ggplot2")
 # the input file is from clusterprofiler result, and it can be homemade list with cluster, terms, GeneRatio, p.adjust value.
 data <- read.table(file = "merge.txt", header = TRUE)
 
-> head(merge)
+> head(data)
       Cluster         ID X_                           Description                                   ID_Description  GeneRatio
 1 All_targets GO:0016569  _       covalent chromatin modification       GO:0016569_covalent chromatin modification 0.11706513
 2 All_targets GO:0033044  _ regulation of chromosome organization GO:0033044_regulation of chromosome organization 0.08821105
@@ -19,6 +19,9 @@ data <- read.table(file = "merge.txt", header = TRUE)
 5 169/23174 1.59000e-23 2.010000e-21 1.430000e-21
 6 195/23174 2.34788e-04 1.855628e-03 1.314257e-03
 
+## reorder the level by unique and order another column Order(No.1-....)
+data$Term <- factor(data$Description, levels=unique(data$Description[order(data$Order)]))
+
 ggplot(data = data, aes(x = Cluster, y = Term, 
                         color = `p.adjust`, size = GeneRatio)) + 
   geom_point() +
@@ -28,8 +31,9 @@ ggplot(data = data, aes(x = Cluster, y = Term,
   xlab("") + 
   theme(
     axis.text.x = element_text(size = 12, color = "black"),
-    axis.text.y = element_text(size = 12),
+    axis.text.y = element_text(size = 12, color = "black"),
     legend.title=element_text(size=12), 
-    legend.text=element_text(size=12)) 
+    legend.text=element_text(size=12)) +
+scale_y_discrete(limits = unique(rev(levels))) ## reverse the y axis labels by levels
    
  
