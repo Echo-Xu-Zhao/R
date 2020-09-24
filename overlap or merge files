@@ -1,0 +1,46 @@
+### overlapped genes in dataframes
+
+site <- read.delim("site_log2intensity.txt", sep = "\t", header = TRUE)
+rna <- read.delim("rna_log2FPKM.txt", sep = "\t", header = TRUE, row.names = 1)
+
+overlapped <- site[site$Gene.name %in% rna$t2g$external_gene_name,] ## I use bioMart to convert ID, so there is t2g tag
+
+#################################################################
+### extract same rows according to specific columns and merge rows
+site <- read.delim("site_log2intensity.txt", sep = "\t", header = TRUE)
+rna2 <- read.delim("rna.txt", sep = "\t", header = TRUE, row.names = 1)
+
+merged_site_rna <- merge(site, rna2, by.x ="Gene.name", by.y = "t2g.external_gene_name", all.x = FALSE, all.y = FALSE) # all.x or all.y means whether show all in x or y
+head(merged_site_rna)
+
+### use R default function to calculate Pearson correaltion and P value
+pearson_correlation$Day.7 <- cor(merged_site_rna$Day.7, merged_site_rna$Day.7R, method = c("pearson"))
+test$Day.7 <- cor.test(merged_site_rna$Day.7, merged_site_rna$Day.7R)
+test$Day.7
+###################################################################
+### use ggpubr package to make correlation plot and calcuate Pearson correlation coefficient and p value
+library(ggpubr)
+library(ggplot2)
+  
+  # Scatter plot with correlation coefficient by using ggscatter function
+  #:::::::::::::::::::::::::::::::::::::::::::::::::
+  p <- ggscatter(merged_site_rna, x = "Day.3", y = "Day.3R", color = "black", size=1, shape = 16,
+                  add = "reg.line",  # Add regressin line
+                  add.params = list(color = "blue", fill = "lightgray"), # Customize reg. line
+                  conf.int = TRUE # Add confidence interval
+  )
+  # Add correlation coefficient
+  p + 
+    stat_cor(method = "pearson", label.x = 18, label.y = 13) +                                 ## label.x and y : the start number of axises
+    labs(x="log2(SUMO Site Intensity)", y="log2(RNA FPKM)", title = "SUMO vs RNA (Day+3)") +
+    theme( axis.text.x = element_text(size = 12, color = "black"),
+           axis.text.y = element_text(size = 12),
+           legend.title=element_text(size=12), 
+           legend.text=element_text(size=12),
+           axis.title = element_text(size=12, color="black"),
+           plot.title = element_text(size = 12, color = "black", vjust = 1.5, hjust = 0.5, face = "plain")) 
+   #.....................................................        
+   ### to select the top 100 genes to show, use dplyr package
+   library(dplyr)
+   merged_site_rna_SUMOtop_Day.7 <- top_n(merged_site_rna, 100, Day.7)                    ## top_n: top, top_frac: bottom
+   
