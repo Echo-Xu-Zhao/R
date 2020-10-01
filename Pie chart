@@ -1,0 +1,38 @@
+Input <- read.delim("C:/Norway/SUMO/Proteomics data/ChIP_noD5/peak distrubtion/peak_distribution.txt", sep = "\t", header = TRUE)
+
+head(Input)
+
+library(ggplot2)
+
+##make barchart first
+bp <- ggplot(Input, aes(x="", y=Counts, fill=Location))+
+      geom_bar(width = 1, stat = "identity")
+      bp
+
+## create piechart
+pie <- bp + coord_polar("y", start=0)
+pie
+
+# Use custom color palettes "blues"
+blank_theme <- theme_minimal()+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.grid=element_blank(),
+    axis.ticks = element_blank(),
+    legend.title=element_text(size=12), 
+    legend.text=element_text(size=12))
+
+pie + blank_theme +
+  theme(axis.text.x=element_blank())+
+  geom_text(aes(label = paste(Counts)), size=4, position = position_stack(vjust = 0.5))
+ 
+
+# Use grey scale
+pie + scale_fill_grey() + theme_minimal()
+
+# Use custom color palettes or blue series colors
+pie + scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))
+
+scale_fill_brewer(palette="Blues") 
