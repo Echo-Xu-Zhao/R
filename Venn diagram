@@ -1,14 +1,17 @@
 library(VennDiagram)
-DEG_wt1234_noY_selected <- read.csv("C:/Bioinformatics/2019_mettl4_rnaseq/DEG_wt1234_noY_selected.csv", header=TRUE)
-DEG_ko1234_noY_selected <- read.csv("C:/Bioinformatics/2019_mettl4_rnaseq/DEG_ko1234_noY_selected.csv", header=TRUE)
+SUMO_peaks <- read.csv("978sig_sumopeaks.txt", header=TRUE, sep = "\t")
+RNA <- read.csv("5603_RNA.txt", header=TRUE, sep = "\t")
 
 
-df1 <- data.frame(DEG_wt1234_noY_selected)
-df2 <- data.frame(DEG_ko1234_noY_selected) 
+df1 <- data.frame(SUMO_peaks$gene_name)
+df2 <- data.frame(RNA$external_gene_name) 
 
 df11 <- df1[,1]
 df21 <- df2[,1]
 
-venn.plot <- venn.diagram(list(df11, df21), fill=c("green", "red"), alpha=c(0.5,0.5), cex = 2, cat.fontface=20, cat.pos = c(330, 380), category.names=c("Wildtype", "Mettl4-/-"))
+p <- venn.diagram(list(df11, df21), filename = "venn diagram.pdf", fill=c("green", "red"), alpha=c(0.5,0.5), 
+                  fontface="plain", cex = 1, 
+                  cat.fontface="plain", cat.pos = c(190, 180), category.names=c("SUMO Peaks", "RNA"),
+                  cat.cex=1, 
+                  resolution = 300,height = 1200, width = 1200)
 
-grid.draw(venn.plot)
