@@ -1,0 +1,14 @@
+library(VennDiagram)
+DEG_wt1234_noY_selected <- read.csv("C:/Bioinformatics/2019_mettl4_rnaseq/DEG_wt1234_noY_selected.csv", header=TRUE)
+DEG_ko1234_noY_selected <- read.csv("C:/Bioinformatics/2019_mettl4_rnaseq/DEG_ko1234_noY_selected.csv", header=TRUE)
+
+
+df1 <- data.frame(DEG_wt1234_noY_selected)
+df2 <- data.frame(DEG_ko1234_noY_selected) 
+
+df11 <- df1[,1]
+df21 <- df2[,1]
+
+venn.plot <- venn.diagram(list(df11, df21), fill=c("green", "red"), alpha=c(0.5,0.5), cex = 2, cat.fontface=20, cat.pos = c(330, 380), category.names=c("Wildtype", "Mettl4-/-"))
+
+grid.draw(venn.plot)
