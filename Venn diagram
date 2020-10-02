@@ -1,17 +1,20 @@
 library(VennDiagram)
-SUMO_peaks <- read.csv("978sig_sumopeaks.txt", header=TRUE, sep = "\t")
-RNA <- read.csv("5603_RNA.txt", header=TRUE, sep = "\t")
+library(grid)
+library(futile.logger)
+
+pparg <- read.csv("pparg_targets.txt", header=TRUE, sep = "\t")
+rxr <- read.csv("rxr_targets.txt", header=TRUE, sep = "\t")
 
 
-df1 <- data.frame(SUMO_peaks$gene_name)
-df2 <- data.frame(RNA$external_gene_name) 
+df1 <- data.frame(pparg$ID)
+df2 <- data.frame(rxr$ID) 
 
 df11 <- df1[,1]
 df21 <- df2[,1]
 
-p <- venn.diagram(list(df11, df21), filename = "venn diagram.pdf", fill=c("green", "red"), alpha=c(0.5,0.5), 
+venn.plot <- venn.diagram(list(df11, df21), filename = "venn diagram.pdf", fill=c("pink", "lightblue"), alpha=c(0.5,0.5), 
                   fontface="plain", cex = 1, 
-                  cat.fontface="plain", cat.pos = c(190, 180), category.names=c("SUMO Peaks", "RNA"),
-                  cat.cex=1, 
-                  resolution = 300,height = 1200, width = 1200)
+                  cat.fontface="plain", cat.pos = c(150, 213), category.names=c("Pparg targets", "Rxr targets"),
+                  cat.cex=1, cat.dist=c(0.05, 0.05), rotation.degree=180,
+                  resolution = 300, margin=0.1, height = 1000, width = 1000)
 
