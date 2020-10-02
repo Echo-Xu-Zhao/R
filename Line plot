@@ -33,4 +33,5 @@ ggplot(data=input, aes(x=Day, y=Zscore, group=Level, colour=Level)) +
   axis.text.y = element_text(size = 12),
   legend.title=element_text(size=12), 
   legend.text=element_text(size=12),
-  plot.title = element_text(size=12))
+  plot.title = element_text(size=12)) +
+    scale_color_manual(values=c("#D16103", "#C4961A", "#52854C", "#C3D7A4", "#0072B2", "#4E84C4")) # manually change colors
