@@ -15,3 +15,15 @@ rownames(t2g) <- t2g$ensembl_gene_id
 D0137_summary$t2g <- t2g[rownames(D0137_summary), ]
 
 write.table(D0137_summary, file = "D01357_cpm_annotation", sep = "\t")
+
+
+########################## new use after update
+library(biomaRt)
+ensembl <- useEnsembl(biomart = "genes", 
+                      dataset = "mmusculus_gene_ensembl", 
+                      verbose = TRUE, 
+                      host = "useast.ensembl.org")# use this host, the default www.ensembl.org is receving some changes, not reponding right now.
+id <- getBM(attributes = c('refseq_mrna', 'external_gene_name', 'ensembl_gene_id' ),
+            filters = 'external_gene_name',
+            values = "Echdc3", 
+            mart = ensembl) 
