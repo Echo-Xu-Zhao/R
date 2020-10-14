@@ -9,6 +9,14 @@ library(ggplot2)
                   add.params = list(color = "blue", fill = "lightgray"), # Customize reg. line
                   conf.int = TRUE # Add confidence interval
   )
+  #:::::::::::::::::::::::::::::::::::::::::::::::::
+  (Optional for above step)
+  ggplot(input, aes(x=log2(input$Day.7_ave_norm), y=log2(input$Day.7))) +
+  geom_point(size=1, shape=20, color= "black")+
+  geom_smooth(method=lm) +
+  ggtitle("Day+7") +
+  labs(x="Slamseq log2(Nomalized Counts)", y="RNAseq log2(Nomalized Counts)")
+  #################################################################################################################################
   # Add correlation coefficient
   p + 
     stat_cor(method = "pearson", label.x = 18, label.y = 13) +                                 ## label.x and y : the start number of axises
