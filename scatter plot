@@ -1,0 +1,25 @@
+### use ggpubr package to make correlation plot and calcuate Pearson correlation coefficient and p value
+library(ggpubr)
+library(ggplot2)
+  
+  # Scatter plot with correlation coefficient by using ggscatter function
+  #:::::::::::::::::::::::::::::::::::::::::::::::::
+  p <- ggscatter(merged_site_rna, x = "Day.3", y = "Day.3R", color = "black", size=1, shape = 16,
+                  add = "reg.line",  # Add regressin line
+                  add.params = list(color = "blue", fill = "lightgray"), # Customize reg. line
+                  conf.int = TRUE # Add confidence interval
+  )
+  # Add correlation coefficient
+  p + 
+    stat_cor(method = "pearson", label.x = 18, label.y = 13) +                                 ## label.x and y : the start number of axises
+    labs(x="log2(SUMO Site Intensity)", y="log2(RNA FPKM)", title = "SUMO vs RNA (Day+3)") +
+    theme( axis.text.x = element_text(size = 12, color = "black"),
+           axis.text.y = element_text(size = 12),
+           legend.title=element_text(size=12), 
+           legend.text=element_text(size=12),
+           axis.title = element_text(size=12, color="black"),
+           plot.title = element_text(size = 12, color = "black", vjust = 1.5, hjust = 0.5, face = "plain")) 
+   #.....................................................        
+   ### to select the top 100 genes to show, use dplyr package
+   library(dplyr)
+   merged_site_rna_SUMOtop_Day.7 <- top_n(merged_site_rna, 100, Day.7)                    ## top_n: top, top_frac: bottom
