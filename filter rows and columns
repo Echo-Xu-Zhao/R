@@ -1,0 +1,2 @@
+library(dplyr)
+input_sig <- filter(input, input$RNA_sig == "1")
