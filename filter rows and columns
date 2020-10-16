@@ -1,2 +1,12 @@
 library(dplyr)
 input_sig <- filter(input, input$RNA_sig == "1")
+
+
+express <- filter(DMSO_timecourse, !is.na(DMSO_timecourse$padj)| !is.na(DMSO_timecourse$padj.1)| !is.na(DMSO_timecourse$padj.2))
+
+non_expressed <- filter(DMSO_timecourse, is.na(DMSO_timecourse$padj)& is.na(DMSO_timecourse$padj.1)& is.na(DMSO_timecourse$padj.2))
+
+express_uniq_gene <- distinct(express, express$Gene, .keep_all = TRUE)
+
+express_DE_transcripts <- filter(express, express$padj<0.01 | express$padj.1<0.01 | express$padj.2 <0.01)
+express_DE_uniq_gene <- distinct(express_DE_transcripts, express_DE_transcripts$Gene, .keep_all = TRUE)
