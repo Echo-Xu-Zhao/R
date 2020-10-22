@@ -1,0 +1,29 @@
+https://biocorecrg.github.io/CRG_RIntroduction/volcano-plots.html
+
+library(dplyr)
+DEG <- filter(DEG, !is.na(DEG$pvalue) & !is.na(DEG$padj))
+DEG$DEG_MLvsDMSO <- "NO(53942)"
+DEG$DEG_MLvsDMSO[DEG$log2FoldChange_LRTtimecourse_MLvsDMSO > 1 & DEG$padj < 0.01] <- "UP(677)"
+DEG$DEG_MLvsDMSO[DEG$log2FoldChange_LRTtimecourse_MLvsDMSO < -1 & DEG$padj < 0.01] <- "DOWN(596)"
+
+library(ggplot2)
+
+ ggplot(DEG,aes(x=log2FoldChange_LRTtimecourse_MLvsDMSO,y=-log10(padj), col=DEG_MLvsDMSO))+ 
+  theme_bw() +
+    geom_point()+
+   xlab("Log2FoldChange(Timecourse_ML792vsDMSO/Total transcripts)") +
+   ylab("-Log10(adjusted p value)")+
+  scale_y_sqrt(limits = c(0,270))+ ## since y axis spans broadly, so I use discontinued y axis
+  xlim(-10, 10)+
+  theme(panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(colour = "black",size = 12),
+        axis.text.y = element_text(colour = "black",size = 12),
+        legend.title=element_text(size=12), 
+        legend.text=element_text(size=12),
+        plot.title = element_text(size=12),
+        axis.title = element_text(colour = "black", size = 12, hjust = 0.5))+
+  geom_vline(xintercept=c(-1, 1), col="blue", linetype="dashed") +
+  geom_hline(yintercept=(2), col="blue", linetype="dashed") +
+  scale_color_manual(values=c("blue", "black","red"))
+  
