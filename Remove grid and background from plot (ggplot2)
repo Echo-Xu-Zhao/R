@@ -1,0 +1,13 @@
+https://felixfan.github.io/ggplot2-remove-grid-background-margin/
+
+## theme_bw() will get rid of the background
+myplot + theme_bw()
+
+## remove grid (does not remove backgroud colour and border lines)
+myplot + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+## remove border lines (does not remove backgroud colour and grid lines)
+myplot + theme(panel.border = element_blank())
+
+## add axis line
+myplot + theme(axis.line = element_line(colour = "black"))
