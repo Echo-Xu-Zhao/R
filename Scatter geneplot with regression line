@@ -1,0 +1,17 @@
+## input file with three columns, Days, Counts, treatment
+
+input <- read.delim("Lpig.txt", header = TRUE, sep = "\t")
+
+library(ggplot2)
+
+ggplot(input, aes(x=Days, y=Normalized.Counts, color=treatment, group=treatment)) +
+  geom_point(size=2, shape=20)+
+  stat_smooth(se=FALSE, method="loess")+
+    ggtitle("Lpig") +
+  labs(x="Days", y="Normalized Counts") +
+   theme( axis.text.x = element_text(size = 12, color = "black"),
+         axis.text.y = element_text(size = 12),
+         legend.title=element_text(size=12), 
+         legend.text=element_text(size=12),
+         axis.title = element_text(size=12, color="black"),
+         plot.title = element_text(size = 12, color = "black", vjust = 1.5, hjust = 0.5, face = "plain")) 
