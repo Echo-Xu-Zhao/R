@@ -10,3 +10,13 @@ express_uniq_gene <- distinct(express, express$Gene, .keep_all = TRUE)
 
 express_DE_transcripts <- filter(express, express$padj<0.01 | express$padj.1<0.01 | express$padj.2 <0.01)
 express_DE_uniq_gene <- distinct(express_DE_transcripts, express_DE_transcripts$Gene, .keep_all = TRUE)
+
+
+############## category and count number in each category
+library(dplyr)
+DEG <- filter(input, !is.na(input$pvalue) & !is.na(input$padj))
+DEG$DEG_MLvsDMSO <- "NO(10961)"
+DEG$DEG_MLvsDMSO[DEG$padj < 0.05] <- "Sig"
+DEG$DEG_MLvsDMSO[DEG$log2FoldChange_LRTtimecourse_MLvsDMSO < -1 & DEG$padj < 0.01] <- "DOWN(137)"
+# count number
+DEG %>% group_by(DEG$DEG_MLvsDMSO) %>% summarise(n = n())
