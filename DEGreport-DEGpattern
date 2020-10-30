@@ -1,0 +1,49 @@
+input <- read.delim("MLvsDMSO_TcReadCount_deseq2_average_0.05.txt", header=TRUE, sep = "\t")
+
+library(dplyr)
+input2 <- input %>% select(1, 9:16)
+colnames(input2)
+
+#set the first row as header, same as header=TRUE
+rownames(input2)<-input2[,1]
+#remove x in the first column
+input2<-input2[,-1]
+head(input2)
+
+library(SummarizedExperiment)
+Time <- factor(rep(c("Day-2", "Day+1", "Day+3", "Day+7"), each = 1))
+Treatment <-factor( rep(c("DMSO", "ML792"), each = 4))
+nameD <- paste(Treatment, Time,  sep = "_")
+coldata <- DataFrame(row.names = nameD, Time = Time, Treatment = Treatment)
+coldata
+
+colnames(input2)<-row.names(coldata)
+input2 <- as.matrix(input2)
+
+library(DEGreport)
+library(ggplot2)
+library(ggpubr)
+res <- degPatterns(input2, coldata, time="Time", col = "Treatment", minc = 0, cutoff = 0.7, 
+                   reduce = F, scale = T, summarize = "merge")
+degPlotCluster(res$normalized, "Time", "Treatment", lines = FALSE, min_genes = 1)
+
+# Use the data yourself for custom figures
+ggplot(res[["normalized"]],
+       aes(Time, value, color = Treatment)) +
+  geom_boxplot(outlier.size=0.5) +
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), size = 0.5) +
+  theme_bw() +
+  # change the method to make it smoother
+  geom_smooth(aes(group=Treatment), method = "loess") +
+                       
+  labs(x="Time", y="Z-score of normalized counts", title = "ML792 vs DMSO time course DEGs") +
+  theme( 
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.text.x = element_text(size = 12, color = "black"),
+         axis.text.y = element_text(size = 12),
+         legend.title=element_text(size=12), 
+         legend.text=element_text(size=12),
+         axis.title = element_text(size=12, color="black"),
+         plot.title = element_text(size = 12, color = "black", vjust = 1.5, hjust = 0.5, face = "plain")) 
