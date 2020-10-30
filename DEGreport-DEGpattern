@@ -1,5 +1,6 @@
 input <- read.delim("MLvsDMSO_TcReadCount_deseq2_average_0.05.txt", header=TRUE, sep = "\t")
 
+
 library(dplyr)
 input2 <- input %>% select(1, 9:16)
 colnames(input2)
@@ -24,8 +25,10 @@ library(DEGreport)
 library(ggplot2)
 library(ggpubr)
 res <- degPatterns(input2, coldata, time="Time", col = "Treatment", minc = 0, cutoff = 0.7, 
-                   reduce = F, scale = T, summarize = "merge")
-degPlotCluster(res$normalized, "Time", "Treatment", lines = FALSE, min_genes = 1)
+                   reduce =F, scale = T, summarize = "merge")
+degPlotCluster(res$normalized, "Time", "Treatment", lines = FALSE, min_genes = 2)
+
+write.table(res[["normalized"]], "0.05clusters.txt", sep = "\t", row.names = TRUE)
 
 # Use the data yourself for custom figures
 ggplot(res[["normalized"]],
@@ -36,7 +39,7 @@ ggplot(res[["normalized"]],
   # change the method to make it smoother
   geom_smooth(aes(group=Treatment), method = "loess") +
                        
-  labs(x="Time", y="Z-score of normalized counts", title = "ML792 vs DMSO time course DEGs") +
+  labs(x="Time", y="Z-score of normalized counts", title = "ML792 vs DMSO time course DE transcripts") +
   theme( 
     panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
     panel.border = element_blank(),
