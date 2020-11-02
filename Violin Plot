@@ -2,28 +2,43 @@ library(ggplot2)
 library(ggsignif)
 library(scales)
 #loading the data
-my_data <- read.delim("wt180_intron_vp", header = TRUE, sep = '\t')
+my_data <- read.delim("0.01_DEG_fat_input.txt", header = TRUE, sep = '\t')
 
+library(dplyr)
+my_data <- filter(my_data, my_data$Type != "Labeled/DEGs" & my_data$Type !="Unlabeled/DEGs")
+colnames(my_data)
+
+#my_data$Population <- "NO(0)"
+my_data$Population[abs(my_data$log2FoldChange_LRTtimecourse_MLvsDMSO) > 1 & my_data$Type =="Labeled/Fat cell differentiation"] <- "Labeled_Sig(8)"
+my_data$Population[abs(my_data$log2FoldChange_LRTtimecourse_MLvsDMSO) < 1 & my_data$Type =="Labeled/Fat cell differentiation"] <- "Labeled_Unsig(11)"
+my_data$Population[abs(my_data$log2FoldChange_LRTtimecourse_MLvsDMSO) > 1 & my_data$Type =="Unlabeled/Fat cell differentiation"] <- "Unlabeled_Sig(37)"
+my_data$Population[abs(my_data$log2FoldChange_LRTtimecourse_MLvsDMSO) < 1 & my_data$Type =="Unlabeled/Fat cell differentiation"] <- "Unlabeled_Unsig(96)"
+
+my_data %>% group_by(my_data$Population) %>% summarise(n = n())
 
 # violin chart
-p <- ggplot(my_data, aes(x=Type, y=Log2.foldchange, fill=Type)) + 
-geom_violin() +
-theme(text = element_text(size = 12), 
-      axis.text = element_text(size = 12), 
-      axis.text.x = element_text(size = 12),
-      axis.text.y = element_text(size = 12),
-      axis.title = element_text(size = 12),
-      axis.title.x = element_text(size = 12),
-      axis.title.y = element_text(size = 12),
-      legend.text = element_text(size = 12),
-      legend.title = element_text(size = 12),
-      legend.position = "right",
-      title = element_text(size = 12)
-      ) +
-
-geom_signif(comparisons = list(c("Intron-containing", "Intron-less")),   
-           map_signif_level=TRUE)+
-geom_boxplot(width=0.05)
+p <- ggplot(my_data, aes(x=Population, y=log2FoldChange_LRTtimecourse_MLvsDMSO, fill=Type)) + 
+  geom_violin() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "black"),
+    text = element_text(size = 12), 
+        axis.text = element_text(size = 12), 
+        axis.text.x = element_text(size = 12, angle=45, hjust = 1),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12, hjust=0.5, vjust=1.5),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.position = "right",
+        title = element_text(size = 12)
+  ) +
+  
+  geom_signif(comparisons = list(c("Labeled_Sig(8)", "Unlabeled_Sig(37)"), c("Labeled_Unsig(11)","Unlabeled_Unsig(96)")),   
+              map_signif_level=TRUE, y_position = c(5.5, 6.5))+
+  geom_boxplot(width=0.05)
 
 p+ scale_y_continuous(
-   labels = scales::number_format(accuracy = 0.1))
+  labels = scales::number_format(accuracy = 0.1))
