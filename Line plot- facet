@@ -1,0 +1,20 @@
+library(ggplot2)
+
+input <- read.delim("barplots_representative_genes.txt", header = TRUE, sep = "\t")
+input$Level <- factor(input$Gene, levels = c("Klf10", "Klf3", "Top2a", "Klf5", "Pparg","Adipoq"))
+
+ggplot(input, aes(x=Days, y=Normalized.Counts, group=Level)) + #color=Level, 
+   geom_point(size=2, shape=20)+
+  geom_smooth(se=FALSE, method="loess")+
+    ggtitle("Time course profiles") +
+  labs(x="Days", y="Normalized Counts") +
+    theme_bw() +
+   theme(strip.text = element_text(size=12),
+         axis.line = element_line(colour = "black"),
+         axis.text.x = element_text(size = 12, color = "black", vjust = 0.4 , angle = 90),
+         axis.text.y = element_text(size = 12, color = "black"),
+         legend.title=element_text(size=12), 
+         legend.text=element_text(size=12),
+         axis.title = element_text(size=12, color="black"),
+         plot.title = element_text(size = 12, color = "black", vjust = 1.5, hjust = 0.5, face = "plain")) +
+  facet_wrap(vars(Level),  nrow = 1)
