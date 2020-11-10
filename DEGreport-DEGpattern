@@ -32,7 +32,7 @@ degPlotCluster(res$normalized, "Time", "Treatment", lines = FALSE, min_genes = 2
 write.table(res[["normalized"]], "0.05clusters.txt", sep = "\t", row.names = TRUE)
 
 # Use the data yourself for custom figures
-ggplot(res[["normalized"]],
+ggplot(res[["raw"]],
        aes(Time, value, color = Treatment)) +
   geom_boxplot(outlier.size=0.5) +
   geom_point(position = position_jitterdodge(dodge.width = 0.9), size = 0.5) +
