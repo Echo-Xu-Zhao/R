@@ -4,6 +4,7 @@ input <- read.delim("MLvsDMSO_TcReadCount_deseq2_average_0.05.txt", header=TRUE,
 library(dplyr)
 input2 <- input %>% select(1, 9:16)
 colnames(input2)
+input2 <- unique.data.frame(input2) ### the matrix for DEGreport analysis should be without repeated rows
 
 #set the first row as header, same as header=TRUE
 rownames(input2)<-input2[,1]
