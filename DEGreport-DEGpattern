@@ -27,7 +27,16 @@ library(ggplot2)
 library(ggpubr)
 res <- degPatterns(input2, coldata, time="Time", col = "Treatment", minc = 0, cutoff = 0.7, 
                    reduce =F, scale = T, summarize = "merge")
-degPlotCluster(res$normalized, "Time", "Treatment", lines = FALSE, min_genes = 2)
+degPlotCluster(res$normalized, "Time", "Treatment", lines = FALSE, min_genes = 4) +
+  theme_bw() +
+  theme( 
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+    legend.title=element_text(size=12), 
+    legend.text=element_text(size=12),
+    axis.text.x = element_text(size = 12, color = "black"),
+    axis.text.y = element_text(size = 12),
+    strip.text.x = element_text(size = 12)
+    )
 
 write.table(res[["normalized"]], "0.05clusters.txt", sep = "\t", row.names = TRUE)
 
