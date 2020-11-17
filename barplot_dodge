@@ -1,0 +1,28 @@
+library(ggplot2)
+
+input <- read.delim("benchmarker_input.txt", sep = "\t", header = TRUE)
+
+## reorder level for color legend
+
+input$Genes <- factor(input$Gene, levels = c("Pparg","Cebpa","Cebpb","Cebpd","Gata2","Gata3"))
+colnames(input)
+
+
+ggplot(data=input, aes(x=Genes, y=Nomalized_counts, fill=Day)) +
+  geom_bar(stat="summary", position="dodge", size=1) + #Position = dodge also stacks the x axis items next to each other instead of stacking them.
+  geom_errorbar(stat = 'summary', position = 'dodge', width = .9) +
+  geom_point(stat="identity", position = position_dodge(width = .9), size=1) + #stat="identity", it leaves the data as is
+  theme_bw() +
+  ggtitle("Adpogenesis bench markers") +
+  scale_y_sqrt(limits = c(0,13000), expand=c(0,0))+
+  theme(
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    axis.line = element_line(colour = "black"),
+  axis.text.x = element_text(size = 12, colour = "black"),
+  axis.text.y = element_text(size = 12, colour = "black"),
+  axis.title = element_text(size=12, colour = "black"),
+  legend.title=element_text(size=12), 
+  legend.text=element_text(size=12),
+  plot.title = element_text(size=12, hjust = .5))+
+  scale_fill_brewer()
