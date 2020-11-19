@@ -1,5 +1,4 @@
 ######## http://yulab-smu.top/clusterProfiler-book/chapter2.html
-library(clusterProfiler)
 
 d <- data.frame(target=c(158, 2161), background=c(375, 6149)) # total intron 376, total gene 6524
 row.names(d) <- c("Intron_containing", "Intronless")
