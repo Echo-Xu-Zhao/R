@@ -1,0 +1,41 @@
+library(ggplot2)
+library(ggsignif)
+library(scales)
+library(dplyr)
+library(ggpubr)
+
+#loading the data
+time0<- read.delim("PC8vsPC11_DEGs_in_Time0(PC8vsPC11).txt")
+time30 <-read.delim("PC8vsPC11_DEGs_in_Time30(PC8vsPC11).txt")
+time60 <-read.delim("PC8vsPC11_DEGs_in_Time60(PC8vsPC11).txt")
+time120 <-read.delim("PC8vsPC11_DEGs_in_Time120(PC8vsPC11).txt")
+time180 <-read.delim("PC8vsPC11_DEGs_in_Time180(PC8vsPC11).txt")
+
+my_data <- rbind(time0,time30,time60,time120,time180)
+
+my_data %>% group_by(my_data$Chr) %>% summarise(n = n())
+
+ggplot(my_data, aes(x=Time, y=log2FoldChange, fill=Chr)) + 
+  geom_boxplot(position=position_dodge(0.7), outlier.colour="black", outlier.shape=16,
+               outlier.size=.5, notch=FALSE, width=0.6) +
+  labs(x=NULL, y="log2FoldChange(PC8vsPC11)")+
+  theme_bw() +
+  ylim(-5.0,5.0)+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "black"),
+        text = element_text(size = 12, colour = "black"), 
+        axis.text = element_text(size = 12), 
+        axis.text.x = element_text(size = 12, hjust = .5, colour = "black"),
+        axis.text.y = element_text(size = 12, colour = "black"),
+        axis.title = element_text(size = 12),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12, hjust=0.5, vjust=1.5),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.position = "right",
+        title = element_text(size = 12)
+  )+
+  scale_fill_manual(values=c("red", "grey"))+
+  stat_compare_means(aes(group = Chr), method = "t.test", label = "p.format", size=4)
+
