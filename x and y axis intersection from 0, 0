@@ -1,1 +1,5 @@
+## For discontinued y axis
 scale_y_sqrt(limits = c(0,13000), expand=c(0,0))
+
+## For continued y axis
+scale_y_continuous(limits=c(0, 2), expand = c(0, 0))
