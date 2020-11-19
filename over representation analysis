@@ -1,5 +1,6 @@
 ######## http://yulab-smu.top/clusterProfiler-book/chapter2.html
 
+############################## For few genes
 d <- data.frame(target=c(158, 2161), background=c(375, 6149)) # total intron 376, total gene 6524
 row.names(d) <- c("Intron_containing", "Intronless")
 d
@@ -11,3 +12,28 @@ fisher.test(d, alternative = "greater")
 p=c(0.9993, 1, 0.0001392, 0.00000000008993, 0.9982, 1, 0.9987, 0.9995, 0.03706)
 adj_p <- p.adjust(p, method = "BH", n=length(p)) 
 write.table(adj_p, file = "/home/xu/S_cerevisiae_RNAseq/DE/intron_enrichment/adj_Pvalue", sep = "\t", row.names = FALSE)
+
+###################################################################################################################################################################
+############################### For large geneset (suggested)
+### prepare input list include five columns, "Chr" "DE.in.chromosome" "DE.not.in.chromosome" "Total.genes.in.chromosome" "Total.not.in.chromosome"
+input <- read.delim("PC8vsPC11_timecourse_DEGs_Rinput.txt")
+  
+  res <- NULL
+  for (i in 1:nrow(input))
+  {
+  d <- matrix(c(input[i,2], input[i,4], input[i,3], input[i,5]), ncol = 2, byrow = TRUE) 
+  row.names(d) <- c("chr", "NA")
+  #d
+  p <- fisher.test(d, alternative = "greater")$p.value
+  res <- c(res, p)
+  }
+  input$pvalue <- res
+   
+  
+  res2 <- NULL 
+  pvalue <- as.character(input$pvalue)
+  padj <- p.adjust(pvalue, method = "BH", n=length(pvalue))
+  res2 <- c(res2, padj)
+  input$padj <- res2
+  
+  write.table(input, file = "PC8vsPC11_timecourse_DEGs_Routput.txt", sep = "\t", row.names = FALSE)
