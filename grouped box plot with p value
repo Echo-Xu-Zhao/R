@@ -14,8 +14,9 @@ time180 <-read.delim("PC8vsPC11_DEGs_in_Time180(PC8vsPC11).txt")
 my_data <- rbind(time0,time30,time60,time120,time180)
 
 my_data %>% group_by(my_data$Chr) %>% summarise(n = n())
+my_data$group <- factor(my_data$Time, levels = c("Time0","Time30","Time60","Time120","Time180"))
 
-ggplot(my_data, aes(x=Time, y=log2FoldChange, fill=Chr)) + 
+ggplot(my_data, aes(x=group, y=log2FoldChange, fill=Chr)) + 
   geom_boxplot(position=position_dodge(0.7), outlier.colour="black", outlier.shape=16,
                outlier.size=.5, notch=FALSE, width=0.6) +
   labs(x=NULL, y="log2FoldChange(PC8vsPC11)")+
