@@ -1,0 +1,48 @@
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+
+all_DEG <- read.delim("PC8vsPC11_timecourse_DEGs.txt")
+#all_DEG <- filter(all_DEG, all_DEG$baseMean !=0 & all_DEG$padj<0.05)
+all_DEG=all_DEG[,c(1,11)]
+
+pc8_time30 <- read.delim("PC8_Time30vsTime0_DEGs.txt")
+pc11_time30 <- read.delim("PC11_Time30vsTime0_DEGs.txt")
+
+time30 <-merge(pc8_time30, pc11_time30, by.x="Gene", by.y = "Gene", all.x = T, all.y = F)
+time30=time30[,c(1:5,7,11,17,21)]
+time30_deg <- merge(time30, all_DEG, by.x = "Gene", by.y = "Gene", all.x = T, all.y = F)
+time30_deg <- filter(time30_deg, !is.na(time30_deg$padj))
+
+time30_deg$Color=time30_deg$padj
+time30_deg$Color[time30_deg$padj>=0.05] <- NA
+
+#time30_deg %>% group_by(time30_deg$Type) %>% summarise(n = n())
+
+ggplot(time30_deg, aes(x=log2FoldChange.y, y=log2FoldChange.x))+
+  geom_point(color="#999999", size=1, shape=20)+
+  #geom_point(data=subset(time30_deg, !is.na(Color)), aes(color=Color), size=1, shape=20)+
+ geom_bin2d(data=subset(time30_deg, !is.na(Color)), aes(color=Color), bins = 120) +
+  #stat_smooth(data=subset(time30_deg, is.na(Color)), se=FALSE, method="lm", color="#999999", size=.5)+
+  stat_smooth(data=subset(time30_deg, !is.na(Color)), se=FALSE, method="lm", color="red", size=.5)+
+  #stat_cor(method = "pearson", label.x = c(-5), label.y = c(5), color="black" )+ 
+  stat_cor(data=subset(time30_deg, !is.na(Color)), method = "pearson", label.x = c(-4.5), label.y = c(4.5), color="black" )+ 
+  geom_abline(slope=1, intercept=0, size=.5)+
+  xlim(-4.5,4.5) +
+  ylim(-4.5,4.5)+
+  theme_bw() +
+  ggtitle("Time30") +
+  labs(x="log2Foldchange over Time0/PC11", y="log2Foldchange over Time0/PC8") +
+  theme( 
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+         axis.text.x = element_text(size = 12, color = "black"),
+         axis.text.y = element_text(size = 12, color = "black"),
+         legend.title=element_text(size=12, color = "black"), 
+         legend.text=element_text(size=12, color = "black"),
+         axis.title = element_text(size=12, color="black"),
+         plot.title = element_text(size = 12, color = "black", vjust = 1.5, hjust = 0.5, face = "plain")) +
+  scale_fill_continuous(type = "viridis")
+######### customize the color of different subsets
+  #scale_color_gradient(low = "red", high = "black", na.value = "black")
+  #scale_color_viridis_c(option = "D", direction = 1) ##or scale_fill_viridis_c(breaks = c(100, 500, 1500, 2500, 4000)), na.value = "black"
+## 4x3
