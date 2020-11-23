@@ -1,0 +1,26 @@
+library(ggplot2)
+
+ minuslog10padj<- c("6.96641542448459","0", "0.834399597482589","0")
+ Chromosome <- c("All_Chr.","All_Chr.", "Chr.IV","Chr.IV")
+ Type <- c("TATA_containing","TATA_less","TATA_containing","TATA_less")
+input <- data.frame(minuslog10padj, Chromosome, Type)
+
+ggplot(input, aes(x=Chromosome, y=as.numeric(minuslog10padj), fill=Type)) + ##as.numeric(): change the values to numeric
+  geom_bar(stat = "identity", size=.7, width = .7, position = "dodge")+
+  theme_bw() +
+  #ggtitle("Enrichment of TATA-contatining DEGs in chromosomes") +
+  #coord_flip() + : switch x and y axises
+  scale_y_continuous(name="-log10 (padj)", expand = c(0,0), limits=c(0, 8))+
+    theme(
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.text.x = element_text(size = 12, colour = "black"),
+    axis.text.y = element_text(size = 12, colour = "black"),
+    axis.title = element_text(size=12, colour = "black"),
+    legend.title=element_text(size=12), 
+    legend.text=element_text(size=12),
+    plot.title = element_text(size=12, hjust = .5)
+    ) +
+  scale_fill_manual(values = c("red","grey"))
+# 7x4.5
