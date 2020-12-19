@@ -1,3 +1,8 @@
 https://seqqc.wordpress.com/2019/07/25/how-to-use-phyper-in-r/
 
-
+phyper(q=615, m=645, n=14647, k=15084, lower.tail = F, log.p = FALSE) 
+  #  # q, DE in chrIV -1 (DEG -1); m, total DE genes; n, total genes in chrIV -m (total-m); k, sample size, total chrIV genes
+  #p <- fisher.test(d, alternative = "greater")$p.value
+ 
+p=c(1.97802e-07,0.9999999,6.734711e-21,1,3.570897e-09,1)
+p.adjust(p, method = "BH", n=length(p))
