@@ -1,0 +1,9 @@
+https://blog.csdn.net/weixin_46585008/article/details/109497444
+https://blog.csdn.net/weixin_46585008/article/details/109499743?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-11.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-11.control
+https://www.biostars.org/p/272309/
+
+Fold-changes in your LRT are from the last column in the model matrix, which is presumably stage 4. There's no meaningful fold-change that really describes such an LRT.
+
+There's no reason that a gene DE in the LRT has to be DE at any given time point. What you're testing is whether "including stage in the model significantly improves the fit". You can have a bunch of subthreshold changes at each stage that then are significant in the LRT (e.g., consider a small increase in expression at each stage).
+
+Don't intersect test results, there are metrics designed specifically to assess how enriched one group is versus multiple others. One such example would be the tau metric (see this paper for a comparison).
