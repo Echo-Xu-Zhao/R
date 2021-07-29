@@ -1,0 +1,105 @@
+irx3_day1 <- read.csv("Day1_Full_Results2.csv")
+irx3_day7 <- read.csv("Day7_Full_Results2.csv")
+
+
+library(biomaRt)
+listEnsembl()
+listDatasets(ensembl)
+head(listAttributes(ensembl))
+
+ensembl <- useEnsembl(biomart = "genes", 
+                      dataset = "mmusculus_gene_ensembl", 
+                      verbose = TRUE, 
+                      host = "useast.ensembl.org")
+input<- data.frame(irx3_day1$Ensembl_Gene_ID)
+
+id <- getBM(attributes = c('external_gene_name', 'ensembl_gene_id'),
+            filters = 'ensembl_gene_id',
+            values = input, 
+            mart = ensembl) 
+
+irx3_day1 <- merge(irx3_day1, id, by.x = "Ensembl_Gene_ID", by.y = "ensembl_gene_id", all.x = T, all.y = F)
+
+write.table(mergelist, "Day1_Full_Results2.txt", row.names = F, col.names = T, sep = "\t")
+
+
+input2<- data.frame(irx3_day7$Ensembl_Gene_ID)
+
+id <- getBM(attributes = c('external_gene_name', 'ensembl_gene_id'),
+            filters = 'ensembl_gene_id',
+            values = input2, 
+            mart = ensembl) 
+
+irx3_day7 <- merge(irx3_day7, id, by.x = "Ensembl_Gene_ID", by.y = "ensembl_gene_id", all.x = T, all.y = F)
+
+write.table(mergelist, "Day7_Full_Results2.txt", row.names = F, col.names = T, sep = "\t")
+
+
+## calculate score for ML792 dataset
+ml_day1 <- read.delim("ML792vsDMSO_day1_2.txt")
+ml_day7 <- read.delim("ML792vsDMSO_day7_2.txt")
+
+ml_day1$Score <- c(-log10(ml_day1$padj) * (ml_day1$log2FoldChange_TreatmentML.Time1))
+ml_day7$Score <- c(-log10(ml_day7$padj) * (ml_day7$log2FoldChange_TreatmentML.Time7))
+
+ml_day1 <- ml_day1[, c(2,7)]
+ml_day7 <- ml_day7[, c(2,7)]
+
+ml_day1 <- subset(ml_day1, !is.na(ml_day1$Score))
+ml_day7 <- subset(ml_day7, !is.na(ml_day7$Score))
+
+## calculate score for Irx3 dataset
+irx3_day1 <- read.delim("Day1_Full_Results2.txt")
+irx3_day7 <- read.delim("Day7_Full_Results2.txt")
+
+irx3_day1$score <-c(-log10(irx3_day1$padj) * (irx3_day1$log2FoldChange))
+irx3_day7$score <-c(-log10(irx3_day7$padj) * (irx3_day7$log2FoldChange))
+
+irx3_day1 <- irx3_day1[,c(7,8)]
+irx3_day7 <- irx3_day7[,c(7,8)]
+
+irx3_day1 <- subset(irx3_day1, !is.na(irx3_day1$score))
+irx3_day7 <- subset(irx3_day7, !is.na(irx3_day7$score))
+
+# remove duplicates
+library(dplyr)
+
+irx3_day1 <- distinct(irx3_day1, external_gene_name, .keep_all= TRUE)
+irx3_day7 <- distinct(irx3_day7, external_gene_name, .keep_all= TRUE)
+
+## make RRHO objectives
+library(RRHO2)
+
+gene_list1 <-merge(ml_day1, irx3_day1, by.x = "Gene_symbol", by.y = "external_gene_name", all = F)
+gene_list2 <-merge(irx3_day1, ml_day1, by.x = "external_gene_name", by.y = "Gene_symbol", all = F)
+
+gene_list1 <- gene_list1[,c(1:2)]
+gene_list2 <- gene_list2[,c(1:2)]
+
+RRHO_obj <-  RRHO2_initialize(gene_list1, gene_list2, labels = c("ML792 vs DMSO (Day1)", "Irx3 KO vs WT (Day1)"), log10.ind=TRUE)
+RRHO2_heatmap(RRHO_obj, maximum = 54, minimum = 0) # the scale is same as day7
+RRHO2_vennDiagram(RRHO_obj, type="dd")
+
+
+##
+gene_list1 <-merge(ml_day7, irx3_day7, by.x = "Gene_symbol", by.y = "external_gene_name", all = F)
+gene_list2 <-merge(irx3_day7, ml_day7, by.x = "external_gene_name", by.y = "Gene_symbol", all = F)
+
+gene_list1 <- gene_list1[,c(1:2)]
+gene_list2 <- gene_list2[,c(1:2)]
+
+RRHO_obj <-  RRHO2_initialize(gene_list1, gene_list2, labels = c("ML792 vs DMSO (Day7)", "Irx3 KO vs WT (Day7)"), log10.ind=TRUE)
+RRHO2_heatmap(RRHO_obj)
+
+
+## gene lists (down regulation in list1 and down regulation in list 2) that provide the most significant overlap
+RRHO_obj$genelist_dd
+
+## down regulation genes in list1
+RRHO_obj$genelist_dd$gene_list1_dd
+
+## down regulation genes in list2
+RRHO_obj$genelist_dd$gene_list2_dd
+
+## overlap between down regulation genes in list1 and list2
+RRHO_obj$genelist_dd$gene_list_overlap_dd
