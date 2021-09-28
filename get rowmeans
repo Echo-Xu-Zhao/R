@@ -1,0 +1,1 @@
+list$mean = rowMeans(list[,c(3,4)])
