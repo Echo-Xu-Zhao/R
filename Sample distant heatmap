@@ -1,0 +1,24 @@
+library(pheatmap)
+library(RColorBrewer)
+
+
+sampleDists <- as.matrix(dist(all2, method = "euclidean"))
+sampleDists <- round(sampleDists, 1)
+
+
+
+pheatmap::pheatmap(sampleDists,
+                   color = colorRampPalette(rev(brewer.pal(n = 8, name = "Blues")))(100),
+                   clustering_distance_rows = sampleDists,
+                   clustering_distance_cols = sampleDists,
+                   display_numbers = sampleDists,
+                   # scale = "none",
+                   # main = "Samples distance",
+                   # annotation_col = anno_col,
+                   # annotation_row = anno_col,
+                   cluster_rows = F,
+                   cluster_cols = F,
+                   #show_rownames = TRUE,
+                   #show_colnames = TRUE,  
+                   #annotation_colors = ann_colors
+)
