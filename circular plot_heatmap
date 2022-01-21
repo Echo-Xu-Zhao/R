@@ -2,40 +2,38 @@ https://jokergoo.github.io/circlize_book/book/
 
 ########################
 library(circlize) # >= 0.4.10
+library(ComplexHeatmap)
+
+circos.clear()
 
 mat <- read.delim("input.txt", row.names = 1)
 colnames(mat) <- c("D-2",  "D+1",   "D+3",   "D+7" ,  "Type")
 
 mat1 <- data.matrix(mat[, c(1:4)])
 
-split <- factor(mat$Type, levels = c("PRC2 complex","PRC1.6 complex","NuRD complex","NoRC complex",
-                                     "Heterochromatin proteins","H3K9me2/3 deposition","DNA methylation",
-                                     "Cohesins","Centromeric proteins","Other"))
-
 par(bg=NA)
 col_fun1 = colorRamp2(c(-1.6, 0, 1.6), c("blue", "white", "red"))
-circos.par(gap.after = c(2, 2, 2,2,2,2,2, 2,2,10))
-circos.heatmap(mat1, split = factor(split, levels = c("PRC2 complex","PRC1.6 complex","NuRD complex","NoRC complex",
-                                                      "Heterochromatin proteins","H3K9me2/3 deposition","DNA methylation",
-                                                      "Cohesins","Centromeric proteins","Other")), 
-               col = col_fun1, show.sector.labels = F, rownames.side = "outside", cluster = T,rownames.cex = 0.7)
+circos.par(gap.after = c(2, 2, 2,2,2,2,2, 2,2,2,2,2,10))
+circos.heatmap(mat1, split = factor(mat$Type, levels = c("PRC2 complex","PRC1.6 complex","NuRD complex","NoRC complex","NcoR proteins",
+                                                      "Heterochromatin proteins","H3K9me2/3 deposition","Histone acetyltransferase","DNA methylation",
+                                                      "Cohesins","Centromeric proteins","Mediator","Other")), 
+               col = col_fun1, show.sector.labels = F, rownames.side = "outside", cluster = T,
+               rownames.cex = 1.5,track.height = 0.4)
 
-#### gap and colnames
+##### color code
+
+lgd = Legend(title = NULL, col_fun = col_fun1,labels_gp = gpar(fontsize = 15))
+grid.draw(lgd)
+
+
+
+#### colname annotation
 circos.track(track.index = get.current.track.index(), panel.fun = function(x, y) {
   if(CELL_META$sector.numeric.index == 4) { # the last sector
     cn = colnames(mat1)
     n = length(cn)
-    circos.text(rep(CELL_META$cell.xlim[2], n) + convert_x(1, "mm"), 
-                1:n - 3.4, cn, 
-                cex = 0.7, adj = c(0, 0.5), facing = "inside")
+    circos.text(rep(CELL_META$cell.xlim[2], n) + convert_x(2, "mm"), 
+                1:n -0.5, cn, 
+                cex = 1.5, adj = c(90, 0.5), facing = "inside")
   }
 }, bg.border = NA)
-
-##### color code
-library(ComplexHeatmap)
-lgd = Legend(title = NULL, col_fun = col_fun1)
-grid.draw(lgd)
-
-
-circos.clear()
-
