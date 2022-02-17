@@ -19,7 +19,7 @@ x5<-x5[!is.na(x5)]
 list <- list(x1, x2, x3, x4, x5)
 names(list) <- c("cluster1", "cluster2","cluster3","cluster4","cluster5")
 
-GO <- compareCluster(geneCluster = list, fun = "enrichGO", ont = "BP", OrgDb="org.Mm.eg.db")
+GO <- compareCluster(geneCluster = list, fun = "enrichGO", ont = "BP", OrgDb="org.Mm.eg.db", pvalueCutoff=0.05)
 # simplify and reduce redudant terms.
 # ‘select_fun’ (which can be a user defined function) to feature ‘by’ to select one representative terms from redundant terms (which have similarity higher than ‘cutoff').
 GO2 <- simplify(GO, cutoff=0.5, by="p.adjust", select_fun=min, measure = "Wang") # only works for GO
