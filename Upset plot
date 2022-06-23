@@ -1,0 +1,40 @@
+gata1 <- read.delim("intersect_GATA1.bed", header = F)
+gata2 <- read.delim("intersect_GATA2.bed", header = F)
+common_gata1 <- read.delim("intersect_consensuspeaks_GATA1.bed", header = F)
+common_gata2 <- read.delim("intersect_consensuspeaks_GATA2.bed", header = F)
+
+
+colnames(common_gata1) <- c("chr","start","end", "GATA1_peak_id")
+colnames(common_gata2) <- c("chr","start","end", "GATA2_peak_id")
+
+
+gata1 <- gata1[,c(4,8)]
+colnames(gata1) <- c("GATA1_peak_id","GATA2_peak_id")
+gata2 <- gata2[,c(4,8)]
+colnames(gata2) <- c("GATA2_peak_id","GATA1_peak_id")
+
+common <- merge(common_gata1,common_gata2, by = c("chr","start","end"), all = T)
+write.table(common, "GATA1&2_common_peaks.txt", sep = "\t", quote = F, row.names = F)
+
+gata1_uni <- subset(gata1, gata1$GATA2_peak_id==".")
+gata2_uni <- subset(gata2, gata2$GATA1_peak_id==".")
+
+library(dplyr)
+library(tidyr)
+
+g1 <- gata1_uni
+g2 <- gata2_uni[,c(2,1)]
+common12 <- common[,c(4,5)]
+
+all <- rbind(common12, g1,g2)
+
+all$GATA1 <- 1
+all$GATA1[all$GATA1_peak_id=="."] <- 0
+
+all$GATA2 <- 1
+all$GATA2[all$GATA2_peak_id=="."] <- 0
+
+
+library(UpSetR)
+input <- all[,c(3,4)]
+upset(input, order.by = c("GATA1", "GATA2"))
