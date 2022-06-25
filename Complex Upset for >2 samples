@@ -1,0 +1,69 @@
+library(dplyr)
+library(tidyr)
+
+## make a reference 
+common_dmso <- read.delim("intersect_consensuspeaks_dmso_menin.bed", header = F)
+common_mm <- read.delim("intersect_consensuspeaks_mm_menin.bed", header = F)
+common_wt <- read.delim("intersect_consensuspeaks_wt_h3k4me3.bed", header = F)
+common_ko <- read.delim("intersect_consensuspeaks_ko_h3k4me3.bed", header = F)
+
+common <- rbind(common_wt, common_ko, common_dmso, common_mm)
+common <- unique(common[,c(1:3)])
+
+wt <- read.delim("intersect_wt_h3k4me3.bed", header = F)
+ko <- read.delim("intersect_ko_h3k4me3.bed", header = F)
+dmso <- read.delim("intersect_dmso_menin.bed", header = F)
+mm <- read.delim("intersect_mm_menin.bed", header = F)
+
+wt_uni <- subset(wt, wt$V5==".")[,c(1:3)]
+ko_uni <- subset(ko, ko$V5==".")[,c(1:3)]
+dmso_uni <- subset(dmso, dmso$V5==".")[,c(1:3)]
+mm_uni <- subset(mm, mm$V5==".")[,c(1:3)]
+
+all <- rbind(common, wt_uni, ko_uni, dmso_uni, mm_uni)
+colnames(all) <- c(all$chr, all$start, all$end)
+all <- unique(all)
+colnames(all) <- c("chr","start","end")
+all$peak_id <- paste0(all$chr,"|", all$start,"|", all$end)
+
+write.table(all,"union_peak_refernce.bed", sep = "\t", quote = F, row.names = F)
+
+############
+## intersect each dataset with reference.bed by performing bedtoolw intersect
+
+colnames(all)[4] <- "union_peak_ID"
+
+wt2 <- read.delim("intersect_union_wt.bed", header = F)
+ko2 <- read.delim("intersect_union_ko.bed", header = F)
+dmso2 <- read.delim("intersect_union_dmso.bed", header = F)
+mm2 <- read.delim("intersect_union_mm.bed", header = F)
+
+colnames(wt2) <- c("chr","start","end","union_peak_ID", "chr_wt","start_wt","end_wt","wt_peak_ID")
+colnames(ko2) <- c("chr","start","end","union_peak_ID", "chr_ko","start_ko","end_ko","ko_peak_ID")
+colnames(dmso2) <- c("chr","start","end","union_peak_ID", "chr_dmso","start_dmso","end_dmso","dmso_peak_ID")
+colnames(mm2) <- c("chr","start","end","union_peak_ID", "chr_mm","start_mm","end_mm","mm_peak_ID")
+
+all2 <- merge(all, wt2, by=c("chr","start","end","union_peak_ID"), all.x = T, all.y = F)
+all2 <- all2[!duplicated(all2[,c("union_peak_ID")]),]
+all2 <- merge(all2, ko2, by=c("chr","start","end","union_peak_ID"), all.x = T, all.y = F)
+all2 <- all2[!duplicated(all2[,c("union_peak_ID")]),]
+all2 <- merge(all2, dmso2, by=c("chr","start","end","union_peak_ID"), all.x = T, all.y = F)
+all2 <- all2[!duplicated(all2[,c("union_peak_ID")]),]
+all2 <- merge(all2, mm2, by=c("chr","start","end","union_peak_ID"), all.x = T, all.y = F)
+all2 <- all2[!duplicated(all2[,c("union_peak_ID")]),]
+
+input <- all2
+input$H3K4me3_WT <- "0"
+input$H3K4me3_WT[!is.na(input$wt_peak_ID)] <- "1"
+input$H3K4me3_KO <- "0"
+input$H3K4me3_KO[!is.na(input$ko_peak_ID)] <- "1"
+input$MENIN_DMSO <- "0"
+input$MENIN_DMSO[!is.na(input$dmso_peak_ID)] <- "1"
+input$MENIN_MM <- "0"
+input$MENIN_MM[!is.na(input$mm_peak_ID)] <- "1"
+
+
+library(UpSetR)
+input <- input[,c(4,21:24)]
+input[,c(2:5)] <- lapply(input[,c(2:5)], as.numeric)
+upset(input, sets = c("H3K4me3_KO","H3K4me3_WT","MENIN_MM","MENIN_DMSO"), keep.order = T)
