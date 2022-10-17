@@ -20,3 +20,35 @@ venn.plot <- venn.diagram(list(df11, df21), filename = "venn diagram.pdf", fill=
                   cat.cex=1, cat.dist=c(0.05, 0.05), rotation.degree=180,
                   resolution = 300, margin=0.1, height = 1000, width = 1000)
 
+###########################
+## three categories
+
+library(VennDiagram)
+library(gridExtra)
+
+df150 <- data.frame(target150$id)
+df200 <- data.frame(target200$id) 
+df250 <- data.frame(target250$id)
+
+NaCl150 <- unique(df150[,1])
+NaCl200 <- unique(df200[,1])
+NaCl250 <- unique(df250[,1])
+
+venn.plot <- venn.diagram(list(NaCl150, NaCl200,NaCl250), NULL, category =rep("", 3),
+               col = "transparent",
+               fill = c("cornflowerblue", "green", "lightpink"),
+               alpha = 0.30,
+               cex = 0.8,
+               fontfamily = "sans",
+               fontface = "plain",
+               cat.col = c("darkblue", "darkgreen", "orange"),
+               cat.cex = 0.8,
+               cat.fontfamily = "sans",
+               margin = 0.2,
+               main = "Proteins identified in three washing conditions",
+               main.fontfamily = "sans",
+               print.mode = c("raw","percent"), # Show both numbers and percent
+               main.pos = c(0.5,0.9))
+
+# Plot the venn diagram using the gridExtra package
+grid.arrange(gTree(children = venn.plot))
