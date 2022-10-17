@@ -34,21 +34,21 @@ NaCl150 <- unique(df150[,1])
 NaCl200 <- unique(df200[,1])
 NaCl250 <- unique(df250[,1])
 
-venn.plot <- venn.diagram(list(NaCl150, NaCl200,NaCl250), NULL, category =rep("", 3),
-               col = "transparent",
-               fill = c("cornflowerblue", "green", "lightpink"),
-               alpha = 0.30,
-               cex = 0.8,
-               fontfamily = "sans",
-               fontface = "plain",
-               cat.col = c("darkblue", "darkgreen", "orange"),
-               cat.cex = 0.8,
-               cat.fontfamily = "sans",
-               margin = 0.2,
-               main = "Proteins identified in three washing conditions",
-               main.fontfamily = "sans",
-               print.mode = c("raw","percent"), # Show both numbers and percent
-               main.pos = c(0.5,0.9))
-
+venn.plot <- venn.diagram(vennlist, NULL, disable.logging = T,
+          category.names = c("NaCl 150mM" , "NaCl 200mM" , "NaCl 250mM"),
+          resolution = 300,
+          lwd = 1,
+          col=c("#440154ff", '#21908dff', '#fde725ff'),
+          fill = c(alpha("#440154ff",0.3), alpha('#21908dff',0.3), alpha('#fde725ff',0.3)),
+          cex = 1,
+          fontfamily = "sans",
+          cat.cex = 1,
+          cat.default.pos = "outer",
+          cat.pos = c(-27, 27, 135),
+          cat.dist = c(0.05, 0.05, 0.08),
+          cat.fontfamily = "sans",
+          cat.fontsize = "50",
+          rotation = 1)
+          
 # Plot the venn diagram using the gridExtra package
 grid.arrange(gTree(children = venn.plot))
